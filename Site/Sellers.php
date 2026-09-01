@@ -150,15 +150,7 @@
 
                             </div>
                             <div class="col-6"></div>
-                            <div class="col-xl-3">
-                                <div class="bg-light ps-3 py-3 rounded d-flex justify-content-between mb-4">
-                                    <label for="fruits">Default Sorting:</label>
-                                    <select id="fruits" name="fruitlist" class="border-0 form-select-sm bg-light me-3" form="fruitform">
-                                        <option value="nothing">Nothing</option>
-                                        <option value="popularity">Popularity</option>
-                                    </select>
-                                </div>
-                            </div>
+                          
                         </div>
                         <div class="row g-4">
 
@@ -215,7 +207,7 @@
                                             <div class="fruite-img">
                                                 <img src="../Seller_Dashboard/${seller?.image}" class="img-fluid w-100 rounded-top" alt="" style="height: 220px;">
                                             </div>
-                                            <div class="text-white background-sec px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">${seller.total_rate}</div>
+                                           
                                             <div class="p-4 border border-secondary border-top-0 rounded-bottom">
                                                 <h4>${seller?.name}</h4>
                                                 <p>${seller?.description?.substring(0, 10)}...</p>
@@ -256,13 +248,11 @@
                                             <div class="fruite-img">
                                                 <img src="../Seller_Dashboard/${seller?.image}" class="img-fluid w-100 rounded-top" alt="" style="height: 220px;">
                                             </div>
-                                            <div class="text-white background-sec px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">${seller.total_rate}</div>
                                             <div class="p-4 border border-secondary border-top-0 rounded-bottom">
                                                 <h4>${seller?.name}</h4>
                                                 <p>${seller?.description?.substring(0, 10)}...</p>
                                                 <div class="d-flex justify-content-between flex-lg-wrap">
-                                                    <p class="text-dark fs-5 fw-bold mb-0">(${seller?.total_rate})</p>
-                                                    <a href="./Seller.php?seller_id=${seller?.id}" class="btn border border-secondary rounded-pill px-3 text-primary"> View Sellers</a>
+                                                    <a href="./Seller.php?seller_id=${seller?.id}" class="btn border border-secondary rounded-pill px-3 text-primary"> View Seller</a>
                                                 </div>
                                             </div>
                                         </div>

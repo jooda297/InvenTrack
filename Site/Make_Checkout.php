@@ -6,16 +6,12 @@ require_once './Socket.php';
 session_start();
 $B_ID = $_SESSION['B_ID'];
 
-use PHPMailer\PHPMailer\PHPMailer;
 
-require '../phpmailer/src/Exception.php';
-require '../phpmailer/src/PHPMailer.php';
-require '../phpmailer/src/SMTP.php';
 
 $buyer_id = $_GET['B_ID'];
 
 $cart = [];
-$productsList = [];
+
 
 $cartSql = mysqli_query($con, "SELECT * from carts WHERE buyer_id = '$buyer_id'");
 
@@ -72,23 +68,42 @@ if ($stmt->execute()) {
 
             if ($orderItemStmt->execute()) {
 
-                $productStmt = $con->prepare("SELECT name AS product_name, qty AS product_qty FROM products WHERE id = ?");
-                $productStmt->bind_param("i", $product_id);
+               $productStmt = $con->prepare(
+    "SELECT name, qty FROM products WHERE id = ?"
+);
 
-                $productStmt->execute();
+$productStmt->bind_param("i", $product_id);
 
-                $productStmt->store_result();
+$productStmt->execute();
+$productStmt->store_result();
 
-                if ($productStmt->num_rows > 0) {
+if ($productStmt->num_rows > 0) {
 
-                    $productStmt->bind_result($product_name, $product_qty);
-                    $productStmt->fetch();
+    // Initialize variables before bind_result
+    $product_name = '';
+    $currentStock = 0;
 
-                    $newQty = $product_qty - $qty;
-if ($newQty < 0) $newQty = 0;
+    // name goes into $product_name
+    // qty goes into $currentStock
+    $productStmt->bind_result($product_name, $currentStock);
+    $productStmt->fetch();
 
-$updateProductStmt = $con->prepare("UPDATE products SET qty = ? WHERE id = ?");
-$updateProductStmt->bind_param("ii", $newQty, $product_id);
+    // Current inventory - amount customer purchased
+    $newQty = $currentStock - $qty;
+
+    if ($newQty < 0) {
+        $newQty = 0;
+    }
+
+    $updateProductStmt = $con->prepare(
+        "UPDATE products SET qty = ? WHERE id = ?"
+    );
+
+    $updateProductStmt->bind_param(
+        "ii",
+        $newQty,
+        $product_id
+    );
 
 if ($updateProductStmt->execute()) {
     notify_socket_server($product_id, $newQty, $sellerId);
@@ -97,34 +112,11 @@ if ($updateProductStmt->execute()) {
     $deleteFromCartStmt->bind_param("i", $cart_id);
     $deleteFromCartStmt->execute();
 
-    // keep the rest of your code as-is...
+   
 }
 
-                        $sellersSql = mysqli_query($con, "select * from users where id='$sellerId'");
-                        $sellerRow = mysqli_fetch_array($sellersSql);
+                     
 
-                        $sellerEmail = $sellerRow['email'];
-
-                        if ($newQty <= 2) {
-
-                            $exists = false;
-
-                            foreach ($productsList as $product) {
-                                if ($product['id'] == $product_id) {
-                                    $exists = true;
-                                    break;
-                                }
-                            }
-
-                            if (!$exists) {
-
-                                $productsList[] = [
-                                    'id' => $product_id,
-                                    'name' => $product_name,
-                                    'seller_email' => $sellerEmail,
-                                ];
-                            }
-                        }
                     }
                 }
             }
@@ -132,37 +124,7 @@ if ($updateProductStmt->execute()) {
         }
     }
 
-    try {
-
-        foreach ($productsList as $product) {
-
-            $mail = new PHPMailer(true);
-
-            $mail->isSMTP();
-            $mail->Host = 'smtp.gmail.com';
-            $mail->SMTPAuth = true;
-            $mail->Username = 'inventrack4@gmail.com';
-            $mail->Password = 'zqttrhuztxkucbxi';
-            $mail->SMTPSecure = 'ssl';
-            $mail->Port = 465;
-
-            $mail->setFrom("inventrack4@gmail.com");
-            $mail->addAddress($product['seller_email']);
-
-            $productName = $product['name'];
-
-            $mail->Subject = "Product Warning Request";
-            $mail->Body = "Please be informed this product {$productName}, has only quantity of 2";
-
-            $mail->send();
-
-        }
-
-    } catch (Exception $e) {
-
-        echo $e->getMessage();
-        die;
-    }
+    
 
 
 echo "<script language='JavaScript'>

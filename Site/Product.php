@@ -168,6 +168,102 @@ if ($sellerId) {
         <!-- Template Stylesheet -->
         <link href="css/style.css" rel="stylesheet">
 
+        <style>
+.product-main-card {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 35px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.07);
+    margin-bottom: 40px;
+}
+
+.product-main-image {
+    width: 100%;
+    height: 500px;
+    border-radius: 22px;
+    overflow: hidden;
+    background: #f5f7f8;
+}
+
+.product-main-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.product-info {
+    padding: 20px 25px;
+}
+
+.product-category-label {
+    display: inline-block;
+    background: #0b4f8a;
+    color: #ffffff;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    margin-bottom: 18px;
+}
+
+.product-title {
+    color: #425b5b;
+    font-family: "Raleway", sans-serif;
+    font-size: 36px;
+    font-weight: 800;
+    margin-bottom: 14px;
+}
+
+.product-seller {
+    color: #738087;
+    margin-bottom: 20px;
+}
+
+.product-seller-link {
+    color: #0b4f8a;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.product-seller-link:hover {
+    text-decoration: underline;
+}
+
+.product-price-main {
+    color: #425b5b;
+    font-weight: 800;
+    margin-bottom: 20px;
+}
+
+.product-description-main {
+    color: #6f7f85;
+    font-size: 16px;
+    line-height: 1.8;
+    margin-bottom: 30px;
+}
+
+.product-tabs-card {
+    background: #ffffff;
+    padding: 25px 30px;
+    border-radius: 22px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+    margin-top: 25px;
+}
+
+@media (max-width: 991px) {
+    .product-main-image {
+        height: 400px;
+    }
+
+    .product-info {
+        padding: 10px 0;
+    }
+
+    .product-main-card {
+        padding: 22px;
+    }
+}
+</style>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     </head>
 
@@ -200,7 +296,6 @@ if ($sellerId) {
                             <?php if ($B_ID) {?>
                                 <a href="Favorites.php" class="nav-item nav-link">Favorites</a>
                                 <?php }?>
-                            <a href="contact.php" class="nav-item nav-link">Contact</a>
                             <?php if ($B_ID) {?>
                                 <a href="Orders.php" class="nav-item nav-link">Orders</a>
                             <?php }?>
@@ -269,25 +364,49 @@ if ($sellerId) {
         <div class="container-fluid py-5 mt-5">
             <div class="container py-5">
                 <div class="row g-4 mb-5">
-                    <div class="col-lg-8 col-xl-9">
-                        <div class="row g-4">
-                            <div class="col-lg-6">
-                                <div class="border rounded">
-                                    <a href="#">
-                                        <img src="../Seller_Dashboard/<?php echo $productImage ?>" class="img-fluid rounded" alt="Image"  style="width: 100%;">
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <h4 class="fw-bold mb-3"><?php echo $productName ?></h4>
-                                <p class="mb-3">Category:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   <?php echo $categoryName ?>
-                            </p>
-                            <p class="mb-3">Seller: <?php echo $sellerName; ?></p>
+                   <div class="col-lg-12">
+                        <div class="row g-5 align-items-center product-main-card">
+                         <div class="col-lg-6">
 
-                                <h5 class="fw-bold mb-3"><?php echo $productPrice ?> JODs</h5>
-                               
-                                <p class="mb-4"><?php echo $productDescription ?></p>
+    <div class="product-main-image">
 
+        <img
+            src="../Seller_Dashboard/<?php echo $productImage ?>"
+            alt="<?php echo htmlspecialchars($productName); ?>"
+        >
+
+    </div>
+
+</div>
+                            <div class="col-lg-6 product-info">
+                             <span class="product-category-label">
+    <?php echo htmlspecialchars($categoryName); ?>
+</span>
+
+<h1 class="product-title">
+    <?php echo htmlspecialchars($productName); ?>
+</h1>
+
+<p class="product-seller">
+
+    Sold by
+
+    <a
+        href="./Seller.php?seller_id=<?php echo $sellerId; ?>"
+        class="product-seller-link"
+    >
+        <?php echo htmlspecialchars($sellerName); ?>
+    </a>
+
+</p>
+
+<h3 class="product-price-main">
+    <?php echo $productPrice ?> JODs
+</h3>
+
+<p class="product-description-main">
+    <?php echo htmlspecialchars($productDescription); ?>
+</p>
 
                                 <?php if ((int)$productqty > 0) { ?>
 
@@ -398,7 +517,7 @@ console.log("data ====> ", data);
                                                  <?php }?>
 
                             </div>
-                            <div class="col-lg-12">
+                            <div class="col-lg-12 product-tabs-card">
                                 <nav>
                                     <div class="nav nav-tabs mb-3">
                                         <button class="nav-link active border-white border-bottom-0" type="button" role="tab"
@@ -481,108 +600,24 @@ console.log("data ====> ", data);
                         </div>
                     </div>
 
-
-                    <div class="col-lg-4 col-xl-3">
-                        <div class="row g-4 fruite">
-                            <div class="col-lg-12">
-                                <div class="input-group w-100 mx-auto d-flex mb-4">
-                                    <input type="search" class="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1">
-                                    <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
-                                </div>
-                                <div class="mb-4">
-                                    <h4>Categories</h4>
-                                    <ul class="list-unstyled fruite-categorie">
-                                    <?php
-                                        $sql1 = mysqli_query($con, "SELECT * from categories WHERE active = 1");
-
-                                        while ($row1 = mysqli_fetch_array($sql1)) {
-
-                                            $category_id   = $row1['id'];
-                                            $category_name = $row1['name'];
-
-                                            $sql2 = mysqli_query($con, "SELECT COUNT(id) AS products_count from products WHERE active = 1 AND category_id = '$category_id'");
-                                            $row2 = mysqli_fetch_array($sql2);
-                                            
-
-// ✅ Get seller for this product
-$sellerName = "Unknown";
-$sellerId = $row2['seller_id'] ?? null;
-
-if ($sellerId) {
-    $sqlSeller = mysqli_query($con, "SELECT name FROM users WHERE id = '$sellerId'");
-    if ($sqlSeller && mysqli_num_rows($sqlSeller) > 0) {
-        $rowSeller = mysqli_fetch_array($sqlSeller);
-        $sellerName = $rowSeller['name'];
-    }
-}
-
-                                            $products_count = $row2['products_count'];
-
-                                        ?>
-                                        <li>
-                                            <div class="d-flex justify-content-between fruite-name">
-                                                <a href="./Products.php?category_id=<?php echo $category_id ?>"><?php echo $category_name ?></a>
-                                                <span>(<?php echo $products_count ?>)</span>
-                                            </div>
-                                        </li>
-                                <?php }?>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="col-lg-12">
-                                <h4 class="mb-4">Featured products</h4>
-
-                                <?php
-                                    $sql223 = mysqli_query($con, "SELECT * from products WHERE active = 1 AND total_rate >= 3.5");
-
-                                    while ($row223 = mysqli_fetch_array($sql223)) {
-
-                                        $product_id         = $row223['id'];
-                                        $product_name       = $row223['name'];
-                                        $product_image      = $row223['image'];
-                                        $product_total_rate = $row223['total_rate'];
-                                        $product_price      = $row223['price'];
-                                        $out_of_stock_pro   = $row223['out_of_stock'];
-
-                                    ?>
-
-                                <div class="d-flex align-items-center justify-content-start">
-                                    <div class="rounded me-4" style="width: 100px; height: 100px;">
-                                        <img src="../Seller_Dashboard/<?php echo $product_image ?>" class="img-fluid rounded" alt="Image">
-                                    </div>
-                                    <div>
-                                        <a href="./Product.php?product_id=<?php echo $product_id ?>"><h6 class="mb-2"><?php echo $product_name ?></h6></a>
-                                        <div class="d-flex mb-2">
-                                        <?php for ($iiii = 1; $iiii < $product_total_rate; $iiii++) {?>
-                                                        <i class="fa fa-star text-secondary"></i>
-                                                        <?php }?>
-                                        </div>
-                                        <div class="d-flex mb-2">
-                                            <h5 class="fw-bold me-2"><?php echo $product_price ?> JODs</h5>
-                                            <h5 class="text-danger text-decoration-line-through"></h5>
-                                            <?php if ($out_of_stock_pro == 1) {?>
-                                                   <h5 class="fw-bold me-2">Out of Stock</h5>
-                                            <?php }?>
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php }?>
-
-                            </div>
-
-                        </div>
-                    </div>
-
-
                 </div>
-                <h1 class="fw-bold mb-0">Related products</h1>
+                <h2 class="fw-bold mb-4">Related Products</h2>
 
                 <div class="vesitable">
                     <div class="owl-carousel vegetable-carousel justify-content-center">
 
 
                     <?php
-                        $sql55 = mysqli_query($con, "SELECT * from products WHERE active = 1 AND category_id = '$product_category_id'");
+                    $current_product_id = $product_id;
+                        $sql55 = mysqli_query(
+    $con,
+    "SELECT *
+     FROM products
+     WHERE active = 1
+     AND category_id = '$product_category_id'
+     AND id != '$current_product_id'
+     LIMIT 8"
+);
 
                         while ($row55 = mysqli_fetch_array($sql55)) {
 

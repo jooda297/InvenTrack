@@ -9,10 +9,11 @@
         $email          = $_POST['email'];
         $phone          = $_POST['phone'];
         $password       = $_POST['password'];
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         $instagram_link = $_POST['instagram_link'];
         $type           = 2;
 
-        $price;
+        $price=0;
 
         $start_date        = $_POST['start_date'];
         $subscription_type = $_POST['subscription_type'];
@@ -43,7 +44,7 @@
 
         }
 
-        $query = mysqli_query($con, "SELECT * FROM users WHERE email ='$email' AND password = '$password'");
+       $query = mysqli_query($con, "SELECT * FROM users WHERE email ='$email'");
 
         if (mysqli_num_rows($query) > 0) {
 
@@ -55,7 +56,7 @@
 
             $stmt = $con->prepare("INSERT INTO users (user_type_id, name, email, phone, password, instagram_link) VALUES (?, ?, ?, ?, ?, ?) ");
 
-            $stmt->bind_param("isssss", $type, $name, $email, $phone, $password, $instagram_link);
+            $stmt->bind_param("isssss", $type, $name, $email, $phone, $hashedPassword, $instagram_link);
 
             if ($stmt->execute()) {
 

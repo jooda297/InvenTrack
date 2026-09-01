@@ -2,7 +2,12 @@
 session_start();
 include "../Connect.php";
 
-function notify_socket_product_updated($host, $product_id, $new_qty, $seller_id) {
+function notify_socket_product_updated(
+    string $host,
+    int $product_id,
+    int $new_qty,
+    int $seller_id
+) {
   $payload = json_encode([
     "product_id" => (int)$product_id,
     "new_quantity" => (int)$new_qty,
@@ -56,8 +61,19 @@ if (isset($_POST['SubmitReorder'])) {
 
       $out_of_stock = ($new_qty > 0) ? 0 : 1;
 
-      $stmt2 = $con->prepare("UPDATE products SET qty = ? WHERE id = ? AND seller_id = ?");
-$stmt2->bind_param("iii", $new_qty, $product_id, $S_ID);
+      $stmt2 = $con->prepare(
+    "UPDATE products
+     SET qty = ?, out_of_stock = ?
+     WHERE id = ? AND seller_id = ?"
+);
+
+$stmt2->bind_param(
+    "iiii",
+    $new_qty,
+    $out_of_stock,
+    $product_id,
+    $S_ID
+);
 
 
       if ($stmt2->execute()) {
@@ -244,7 +260,6 @@ $stmt2->bind_param("iii", $new_qty, $product_id, $S_ID);
                 while ($p = mysqli_fetch_assoc($sql)) {
                   $pid = (int)$p['id'];
                   $pname = $p['name'];
-                  $qty = (int)($p['qty'] ?? 0);
                   $qty = (int)($p['qty'] ?? 0);
                   $isOut = ($qty <= 0);
                   $created = $p['created_at'];

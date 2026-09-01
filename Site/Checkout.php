@@ -6,11 +6,7 @@
 
     $B_ID = $_SESSION['B_ID'];
 
-    use PHPMailer\PHPMailer\PHPMailer;
 
-    require '../phpmailer/src/Exception.php';
-    require '../phpmailer/src/PHPMailer.php';
-    require '../phpmailer/src/SMTP.php';
 
     if ($B_ID) {
 
@@ -90,10 +86,13 @@
 
                             if ($productStmt->num_rows > 0) {
 
-                                $productStmt->bind_result($product_name, $product_qty);
-                                $productStmt->fetch();
+    $product_name = '';
+    $product_qty = 0;
 
-                                $newQty = $product_qty - $item['qty'];
+    $productStmt->bind_result($product_name, $product_qty);
+    $productStmt->fetch();
+
+    $newQty = $product_qty - $item['qty'];
                                 $out_of_stock = $newQty == 0;
 
                                 $updateProductStmt = $con->prepare("UPDATE products SET qty = ? WHERE id = ?");
@@ -109,31 +108,7 @@ $updateProductStmt->bind_param("ii", $newQty, $product_id);
                                     $deleteFromCartStmt->bind_param("i", $cart_id);
                                     $deleteFromCartStmt->execute();
 
-                                    $sellersSql = mysqli_query($con, "select * from users where id='$sellerId'");
-                                    $sellerRow  = mysqli_fetch_array($sellersSql);
-
-                                    $sellerEmail = $sellerRow['email'];
-
-                                    if ($newQty <= 2) {
-
-                                        $exists = false;
-
-                                        foreach ($productsList as $product) {
-                                            if ($product['id'] == $product_id) {
-                                                $exists = true;
-                                                break;
-                                            }
-                                        }
-
-                                        if (! $exists) {
-
-                                            $productsList[] = [
-                                                'id'           => $product_id,
-                                                'name'         => $product_name,
-                                                'seller_email' => $sellerEmail,
-                                            ];
-                                        }
-                                    }
+                            
                                 }
                             }
                         }
@@ -149,37 +124,7 @@ $updateProductStmt->bind_param("ii", $newQty, $product_id);
             echo "<script language='JavaScript'>
           document.location='./Orders.php';
              </script>";
-            // try {
-
-            //     foreach ($productsList as $product) {
-
-            //         $mail = new PHPMailer(true);
-
-            //         $mail->isSMTP();
-            //         $mail->Host       = 'smtp.gmail.com';
-            //         $mail->SMTPAuth   = true;
-            //         $mail->Username   = 'inventrack4@gmail.com';
-            //         $mail->Password   = 'zqttrhuztxkucbxi';
-            //         $mail->SMTPSecure = 'ssl';
-            //         $mail->Port       = 465;
-
-            //         $mail->setFrom("inventrack4@gmail.com");
-            //         $mail->addAddress($product['seller_email']);
-
-            //         $productName = $product['name'];
-
-            //         $mail->Subject = "Product Warning Request";
-            //         $mail->Body    = "Please be informed this product {$productName}, has only quantity of 2";
-
-            //         $mail->send();
-
-            //     }
-
-            // } catch (Exception $e) {
-
-            //     echo $e->getMessage();
-            //     die;
-            // }
+           
 
         }
     }
@@ -253,7 +198,6 @@ $updateProductStmt->bind_param("ii", $newQty, $product_id);
                             <?php if ($B_ID) {?>
                                 <a href="Favorites.php" class="nav-item nav-link">Favorites</a>
                                 <?php }?>
-                            <a href="contact.php" class="nav-item nav-link">Contact</a>
                             <?php if ($B_ID) {?>
                                 <a href="Orders.php" class="nav-item nav-link">Orders</a>
                             <?php }?>
@@ -356,10 +300,12 @@ $updateProductStmt->bind_param("ii", $newQty, $product_id);
 
                                             $cart_id    = $row33['id'];
                                             $product_id = $row33['product_id'];
-                                            $options    = json_decode($row33['options'], true);
-                                            $color_id   = $options['color_id'];
-                                            $size_id    = $options['size_id'];
-                                            $qty        = $row33['qty'];
+                                           $options = json_decode($row33['options'], true);
+                                           if (!is_array($options)) {
+                                            $options = [];}
+                                            $color_id = $options['color_id'] ?? null;
+                                            $size_id  = $options['size_id'] ?? null;
+                                            $qty      = $row33['qty'];
 
                                             $sql55 = mysqli_query($con, "SELECT name, image, price, qty from products WHERE id = '$product_id'");
                                             $row55 = mysqli_fetch_array($sql55);
@@ -450,8 +396,8 @@ $updateProductStmt->bind_param("ii", $newQty, $product_id);
                             <input type="hidden" name="business" value="sb-ps6it41795949@business.example.com">
                             <input type="hidden" name="currency_code" value="USD">
                             <input type="hidden" name="amount" value="<?php echo $totalPrice + 1; ?>">
-                            <input type="hidden" name="return" value="http://localhost/Inventrack/Site/Make_Checkout.php?status=success&B_ID=<?php echo $B_ID ?>">
-                            <input type="hidden" name="cancel_return" value="http://localhost/Inventrack/Site/index.php">
+                            <input type="hidden" name="return" value="http://localhost/Inventrack333/Site/Make_Checkout.php?status=success&B_ID=<?php echo $B_ID ?>">
+                            <input type="hidden" name="cancel_return" value="http://localhost/Inventrack333/Site/index.php">
 
 
 

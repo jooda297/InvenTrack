@@ -119,8 +119,13 @@
     <button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search text-primary"></i></button>
     <a href="./Cart.php" class="position-relative me-4 my-auto">
         <i class="fa fa-shopping-bag fa-2x"></i>
-        <span class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" style="top: -5px; left: 15px; height: 20px; min-width: 20px;"><?php echo $cart_count ?></span>
-    </a>
+        <span
+    id="cartCount"
+    class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1"
+    style="top: -5px; left: 15px; height: 20px; min-width: 20px;"
+>
+    <?php echo $cart_count ?>
+</span>
     <a href="./Profile.php" class="my-auto">
         <i class="fas fa-user fa-2x"></i>
     </a>
@@ -302,7 +307,7 @@
                 <div class="tab-class text-center">
                     <div class="row g-4">
                         <div class="col-lg-4 text-start">
-                            <h1>Our Best Products</h1>
+                            <h1>some of our Products</h1>
                         </div>
                         <div class="col-lg-8 text-end">
                             <ul class="nav nav-pills d-inline-flex text-center mb-5">
@@ -377,9 +382,17 @@ if (!empty($B_ID)) {
 
                                         ?>
                                         <div class="col-md-6 col-lg-4 col-xl-3">
-                                            <div class="rounded position-relative fruite-item position-relative">
+    <div
+        class="rounded position-relative fruite-item position-relative product-clickable"
+        onclick="window.location.href='./Product.php?product_id=<?php echo $product_id ?>'"
+        style="cursor: pointer;"
+    >
                                                 <?php if ($B_ID) {?>
-                                            <i id="icon-<?php echo $product_id ?>" onclick="addToFav(<?php echo $B_ID ?>,<?php echo $product_id ?>)" class="<?php echo $isFavorite ? 'fa fa-heart love-icon' : 'fa fa-heart not-fav' ?>"></i>
+                                            <i
+    id="icon-<?php echo $product_id ?>"
+    onclick="event.stopPropagation(); addToFav(<?php echo $B_ID ?>,<?php echo $product_id ?>)"
+    class="<?php echo $isFavorite ? 'fa fa-heart love-icon' : 'fa fa-heart not-fav' ?>">
+</i>
                                             <?php }?>
 
                                                 <div class="fruite-img">
@@ -394,7 +407,11 @@ if (!empty($B_ID)) {
                                                         <p class="text-dark fs-5 fw-bold mb-0"><?php echo $product_price ?> JODs</p>
                                                        
                                                                     <?php if ($out_of_stock == 0) {?>
-                                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                                                    <button
+                                                                    type="button" 
+                                                                    onclick="event.stopPropagation(); addProductToCart(<?php echo $product_id ?>);"
+                                                                    class="btn border border-secondary rounded-pill px-3 text-primary">
+                                                                    <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart </button>
                                                         <?php } else {?>
                                                             <p class="text-dark fs-5 fw-bold mb-0">Out Of Stock</p>
                                                         <?php }?>
@@ -451,7 +468,11 @@ if (!empty($B_ID)) {
 
                                             ?>
                                         <div class="col-md-6 col-lg-4 col-xl-3">
-                                            <div class="rounded position-relative fruite-item">
+                                            <div
+    class="rounded position-relative fruite-item"
+    onclick="window.location.href='./Product.php?product_id=<?php echo $product_id ?>'"
+    style="cursor: pointer;"
+>
 
                                                 <div class="fruite-img">
                                                     <img src="../Seller_Dashboard/<?php echo $product_image_tab ?>" class="img-fluid w-100 rounded-top" alt="" style="height: 220px;">
@@ -493,46 +514,7 @@ if (!empty($B_ID)) {
 
 
 
-        <!-- Vesitable Shop Start-->
-        <div class="container-fluid vesitable py-5">
-            <div class="container py-5">
-                <h1 class="mb-0">Best Sellers</h1>
-                <div class="owl-carousel vegetable-carousel justify-content-center">
-
-                <?php
-                    $sql1 = mysqli_query($con, "SELECT * from users WHERE user_type_id = 2 AND total_rate >= 3.5 AND active = 1");
-
-                    while ($row1 = mysqli_fetch_array($sql1)) {
-
-                        $seller_id          = $row1['id'];
-                        $seller_name        = $row1['name'];
-                        $seller_email       = $row1['email'];
-                        $seller_description = $row1['description'];
-                        $seller_image       = $row1['image'];
-
-                    ?>
-                    <div class="border border-primary rounded position-relative vesitable-item">
-                        <div class="vesitable-img">
-                            <img src="../Seller_Dashboard/<?php echo $seller_image ?>" class="img-fluid w-100 rounded-top" alt="" style="height: 220px;">
-                        </div>
-                        <div class="text-white bg-primary px-3 py-1 rounded position-absolute" style="top: 10px; right: 10px;"></div>
-                        <div class="p-4 rounded-bottom">
-                            <h4><?php echo $seller_name ?></h4>
-                            <p><?php echo substr($seller_description, 0, 10) . '....' ?></p>
-                            <div class="d-flex justify-content-between flex-lg-wrap">
-                                <p class="text-dark fs-5 fw-bold mb-0"></p>
-                                <a href="./Seller.php?seller_id=<?php echo $seller_id ?>" class="btn border border-secondary rounded-pill px-3 text-primary"> View Seller</a>
-                            </div>
-                        </div>
-                    </div>
-                    <?php
-                    }?>
-
-
-                </div>
-            </div>
-        </div>
-        <!-- Vesitable Shop End -->
+        
 
 
         <!-- Banner Section Start-->
@@ -678,6 +660,47 @@ if (!empty($B_ID)) {
 
 
     <!-- Template Javascript -->
+     <script>
+function addProductToCart(productId) {
+
+    <?php if (!$B_ID) { ?>
+
+        alert('Please login first');
+        window.location.href = '../Login.php';
+        return;
+
+    <?php } ?>
+
+    const options = encodeURIComponent(JSON.stringify({}));
+
+    fetch(`./AddToCart.php?product_id=${productId}&qty=1&options=${options}`)
+        .then(response => response.json())
+        .then(data => {
+
+            if (!data.error) {
+
+                alert('Product added to cart');
+
+                const cartCount = document.getElementById('cartCount');
+
+                if (cartCount && data.cart_count !== undefined) {
+                    cartCount.innerHTML = data.cart_count;
+                }
+
+            } else {
+
+                alert(data.message || 'Could not add product to cart');
+
+            }
+
+        })
+        .catch(error => {
+            console.error(error);
+            alert('Something went wrong');
+        });
+}
+</script>
+
     <script src="js/main.js"></script>
    <script>
 document.addEventListener('DOMContentLoaded', function () {

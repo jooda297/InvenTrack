@@ -9,9 +9,10 @@
         $email    = $_POST['email'];
         $phone    = $_POST['phone'];
         $password = $_POST['password'];
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         $type     = 3;
 
-        $query = mysqli_query($con, "SELECT * FROM users WHERE email ='$email' AND password = '$password'");
+        $query = mysqli_query($con, "SELECT * FROM users WHERE email ='$email'");
 
         if (mysqli_num_rows($query) > 0) {
 
@@ -23,7 +24,7 @@
 
             $stmt = $con->prepare("INSERT INTO users (user_type_id, name, email, phone, password) VALUES (?, ?, ?, ?, ?) ");
 
-            $stmt->bind_param("issss", $type, $name, $email, $phone, $password);
+            $stmt->bind_param("issss", $type, $name, $email, $phone, $hashedPassword);
 
             if ($stmt->execute()) {
 

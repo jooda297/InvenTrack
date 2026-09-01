@@ -167,10 +167,13 @@
 
                                 $cart_id    = $row33['id'];
                                 $product_id = $row33['product_id'];
-                                $options    = json_decode($row33['options'], true);
-                                $color_id   = $options['color_id'];
-                                $size_id    = $options['size_id'];
-                                $qty        = $row33['qty'];
+                               $options = json_decode($row33['options'], true);
+                               if (!is_array($options)) {
+                                 $options = [];
+                                 }
+                                 $color_id = $options['color_id'] ?? null;
+                                 $size_id  = $options['size_id'] ?? null;
+                                 $qty      = $row33['qty'];
 
                                 $sql55 = mysqli_query($con, "SELECT name, image, price, qty from products WHERE id = '$product_id'");
                                 $row55 = mysqli_fetch_array($sql55);

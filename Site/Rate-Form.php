@@ -24,14 +24,7 @@ if (!$product_id) {
     die("No items found for this order");
 }
 
-/* Get seller from that product */
-$sqlProduct = mysqli_query($con, "SELECT seller_id FROM products WHERE id = '$product_id' LIMIT 1");
-$rowProduct = mysqli_fetch_array($sqlProduct);
-$seller_id = $rowProduct['seller_id'] ?? null;
 
-if (!$seller_id) {
-    die("Seller not found for this product");
-}
 
 /* Cart count */
 $cart_count = 0;
@@ -178,15 +171,7 @@ $cart_count = $row1['cart_count'] ?? 0;
                             <div class="row">
                                 <div class="col-md-12 col-lg-12">
                                     <div class="form-item w-100">
-                                       <label class="form-label my-3">Rate Seller (out of 5)</label>
-<div class="d-flex gap-2">
-    <?php for ($i = 1; $i <= 5; $i++) { ?>
-        <a href="Rate-Seller.php?Rate=<?php echo $i; ?>&seller_id=<?php echo $seller_id; ?>"
-           class="btn btn-outline-primary">
-           <?php echo $i; ?>
-        </a>
-    <?php } ?>
-</div>
+                                      
 
                                     </div>
                                 </div>

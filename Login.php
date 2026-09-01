@@ -7,51 +7,79 @@ $next = '';
 if (isset($_GET['next']))  $next = $_GET['next'];
 if (isset($_POST['next'])) $next = $_POST['next'];
 
-// block external links
+// Block external links
 if ($next && (strpos($next, "http://") === 0 || strpos($next, "https://") === 0)) {
     $next = '';
 }
 
 if (isset($_POST['Submit'])) {
 
-    $email    = $_POST['email'];
-    $Password = $_POST['password'];
+    $email    = trim($_POST['email'] ?? '');
+    $Password = $_POST['password'] ?? '';
 
-    $query = mysqli_query($con, "SELECT * FROM users WHERE email ='$email' AND password = '$Password'");
+    // Find the account by email
+    $stmt = $con->prepare(
+        "SELECT id, user_type_id, password
+         FROM users
+         WHERE email = ?
+         LIMIT 1"
+    );
 
-    if (mysqli_num_rows($query) > 0) {
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
 
-        $row     = mysqli_fetch_array($query);
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+
+    // Verify the entered password against the stored hash
+    if ($row && password_verify($Password, $row['password'])) {
+
         $id      = $row['id'];
         $type_id = $row['user_type_id'];
 
-        // ✅ SET SESSION FIRST
+        // Set session based on account type
         if ($type_id == 1) {
             $_SESSION['A_Log'] = $id;
+
         } else if ($type_id == 2) {
             $_SESSION['S_Log'] = $id;
+
         } else if ($type_id == 3) {
             $_SESSION['B_ID'] = $id;
         }
 
-        // ✅ THEN REDIRECT
+        // Redirect to requested internal page
         if ($next != '') {
-            echo '<script language="JavaScript">document.location="' . $next . '";</script>';
+            echo '<script language="JavaScript">
+                document.location="' . htmlspecialchars($next, ENT_QUOTES) . '";
+            </script>';
             exit;
         }
 
-        // Normal redirect if no "next"
+        // Normal redirect based on account type
         if ($type_id == 1) {
-            echo '<script language="JavaScript">document.location="Admin_Dashboard/";</script>';
+
+            echo '<script language="JavaScript">
+                document.location="Admin_Dashboard/";
+            </script>';
+
         } else if ($type_id == 2) {
-            echo '<script language="JavaScript">document.location="Seller_Dashboard/";</script>';
+
+            echo '<script language="JavaScript">
+                document.location="Seller_Dashboard/";
+            </script>';
+
         } else if ($type_id == 3) {
-            echo '<script language="JavaScript">document.location="Site/";</script>';
+
+            echo '<script language="JavaScript">
+                document.location="Site/";
+            </script>';
         }
 
         exit;
 
     } else {
+
         echo '<script language="JavaScript">
             alert ("Error ... Please Check Email Or Password !");
         </script>';

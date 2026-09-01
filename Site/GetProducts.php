@@ -51,8 +51,16 @@ if ($min !== null)             { $conditions[] = "p.price >= ?";          $param
 if ($max !== null)             { $conditions[] = "p.price <= ?";          $params[] = $max;             $types .= "d"; }
 
 $orderBy = "";
-if ($filter === 'popularity')  $orderBy = " ORDER BY p.total_rate DESC";
-elseif ($filter === 'price')   $orderBy = " ORDER BY p.price DESC";
+
+if ($filter === 'popularity') {
+    $orderBy = " ORDER BY p.total_rate DESC";
+}
+elseif ($filter === 'price_high') {
+    $orderBy = " ORDER BY p.price DESC";
+}
+elseif ($filter === 'price_low') {
+    $orderBy = " ORDER BY p.price ASC";
+}
 
 $sql .= " WHERE " . implode(" AND ", $conditions) . $orderBy;
 

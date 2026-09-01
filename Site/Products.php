@@ -206,12 +206,13 @@ if ($B_ID) {
                             </div>
                             <div class="col-xl-3">
                                 <div class="bg-light ps-3 py-3 rounded d-flex justify-content-between mb-4">
-                                    <label for="fruits">Default Sorting:</label>
-                                    <select id="fruits" name="fruitlist" class="border-0 form-select-sm bg-light me-3" form="fruitform">
-                                        <option value="nothing">Nothing</option>
-                                        <option value="popularity">Popularity</option>
-                                        <option value="price">High price to low</option>
-                                    </select>
+                                    <label for="fruits"> Sorting:</label>
+                                   <select id="fruits" name="fruitlist" class="border-0 form-select-sm bg-light me-3" form="fruitform">
+                                   <option value="nothing">Default</option>
+                                   <option value="popularity">Popularity</option>
+                                   <option value="price_high">High price to low</option>
+                                   <option value="price_low">Low price to high</option>
+                                </select>
                                 </div>
                             </div>
                         </div>
@@ -222,6 +223,11 @@ if ($B_ID) {
                                         <div class="mb-3">
                                             <h4>Categories</h4>
                                             <ul class="list-unstyled fruite-categorie">
+                                                <li>
+    <div class="d-flex justify-content-between fruite-name">
+        <a href="#" id="all-categories">All</a>
+    </div>
+</li>
                                             <?php
                                                 $sql1 = mysqli_query($con, "SELECT * from categories WHERE active = 1");
 
@@ -270,51 +276,10 @@ if ($B_ID) {
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
-                                        <div class="mb-3">
-                                            <h4>Sub Categories</h4>
-                                            <ul class="list-unstyled fruite-categorie" id="sub_categories_div">
-
-
-
-
-                                            </ul>
-                                        </div>
+                                        
                                     </div>
-                                    <div class="col-lg-12">
-                                        <h4 class="mb-3">Top Rated Sellers</h4>
-
-                                        <?php
-                                            $sql1 = mysqli_query($con, "SELECT * from users WHERE active = 1 AND user_type_id = 2 AND total_rate >= 3.5");
-
-                                            while ($row1 = mysqli_fetch_array($sql1)) {
-
-                                                $seller_id         = $row1['id'];
-                                                $seller_name       = $row1['name'];
-                                                $seller_image      = $row1['image'];
-                                                $seller_total_rate = $row1['total_rate'];
-
-                                            ?>
-                                        <div class="d-flex align-items-center justify-content-start">
-                                            <div class="rounded me-4" style="width: 100px; height: 100px;">
-                                                <img src="../Seller_Dashboard/<?php echo $seller_image ?>" class="img-fluid rounded" alt="">
-                                            </div>
-                                            <div>
-                                                <a href="./Seller.php?seller_id=<?php echo $seller_id ?>"><h6 class="mb-2"><?php echo $seller_name ?></h6></a>
-                                                <div class="d-flex mb-2">
-                                                    <?php for ($ii = 1; $ii < $seller_total_rate; $ii++) {?>
-                                                        <i class="fa fa-star text-secondary"></i>
-                                                        <?php }?>
-                                                </div>
-                                                <div class="d-flex mb-2">
-                                                    <h5 class="fw-bold me-2"></h5>
-                                                    <h5 class="text-danger text-decoration-line-through"></h5>
-                                                </div>
-                                            </div>
-                                        </div>
-<?php }?>
-
-
-                                    </div>
+                                   
+                                
 
                                 </div>
                             </div>
@@ -496,6 +461,16 @@ $(function(){
     fetchProducts();
     fetchSubCategories(cid);
   });
+
+  $('#all-categories').on('click', function(e) {
+    e.preventDefault();
+
+    filters.category_id = null;
+    filters.sub_category_id = null;
+
+    fetchProducts();
+});
+
 
   // Sub‐category links (delegated)
   $(document).on('click', '.sub-category-link a', function(e){

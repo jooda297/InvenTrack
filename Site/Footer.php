@@ -57,9 +57,9 @@
             <div class="col-lg-3 col-md-6">
                 <div class="footer-item">
                     <h4 class="mb-3">Contact</h4>
-                    <p>Address: Jordan Amman Business Park building num 8 </p>
+                    <p>Address: Jordan Amman Business Park building num </p>
                     <p>Email: Inventrack@gmail.com</p>
-                    <p>Phone: +962 795495779</p>
+                    <p>Phone: +962 777777</p>
                     <p>Payment Accepted</p>
                     <img src="img/payment.png" class="img-fluid" alt="">
                 </div>

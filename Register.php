@@ -9,15 +9,16 @@ if (isset($_POST['SubmitCustomer']) && isset($_POST['role']) && $_POST['role'] =
     $email    = $_POST['email'];
     $phone    = $_POST['phone'];
     $password = $_POST['password'];
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
     $type     = 3; // customer
 
-    $query = mysqli_query($con, "SELECT * FROM users WHERE email ='$email' AND password = '$password'");
+    $query = mysqli_query( $con, "SELECT * FROM users WHERE email = '$email'" );
 
     if (mysqli_num_rows($query) > 0) {
         echo '<script>alert("Account already exists!");</script>';
     } else {
         $stmt = $con->prepare("INSERT INTO users (user_type_id, name, email, phone, password) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("issss", $type, $name, $email, $phone, $password);
+        $stmt->bind_param("issss", $type, $name, $email, $phone, $hashedPassword);
 
         if ($stmt->execute()) {
             echo "<script>alert('Signed up successfully as customer, you can login now!');</script>";
@@ -27,12 +28,19 @@ if (isset($_POST['SubmitCustomer']) && isset($_POST['role']) && $_POST['role'] =
 }
 
 /* =============== SELLER SIGNUP LOGIC =============== */
-if (isset($_POST['SubmitSeller']) && isset($_POST['role']) && $_POST['role'] === 'seller') {
+if (
+    isset($_POST['SubmitSeller']) &&
+    isset($_POST['role']) &&
+    $_POST['role'] === 'seller'
+) {
 
     $name           = $_POST['name'];
     $email          = $_POST['email'];
     $phone          = $_POST['phone'];
     $password       = $_POST['password'];
+
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
     $instagram_link = $_POST['instagram_link'];
     $type           = 2; // seller
 
@@ -42,45 +50,107 @@ if (isset($_POST['SubmitSeller']) && isset($_POST['role']) && $_POST['role'] ===
     $subscription_type = $_POST['subscription_type'];
 
     if ($subscription_type == 1) {
-        $end_date          = date('Y-m-d', strtotime($start_date . ' +30 days'));
+
+        $end_date = date(
+            'Y-m-d',
+            strtotime($start_date . ' +30 days')
+        );
+
         $subscription_type_label = "1 Months Contract (65 JOD)";
-        $price             = 65;
+        $price = 65;
+
     } else if ($subscription_type == 2) {
-        $end_date          = date('Y-m-d', strtotime($start_date . ' +90 days'));
+
+        $end_date = date(
+            'Y-m-d',
+            strtotime($start_date . ' +90 days')
+        );
+
         $subscription_type_label = "3 Months Contract (150 JOD)";
-        $price             = 150;
+        $price = 150;
+
     } else if ($subscription_type == 3) {
-        $end_date          = date('Y-m-d', strtotime($start_date . ' +180 days'));
+
+        $end_date = date(
+            'Y-m-d',
+            strtotime($start_date . ' +180 days')
+        );
+
         $subscription_type_label = "6 Months Contract (300 JOD)";
-        $price             = 300;
+        $price = 300;
+
     } else if ($subscription_type == 4) {
-        $end_date          = date('Y-m-d', strtotime($start_date . ' +360 days'));
+
+        $end_date = date(
+            'Y-m-d',
+            strtotime($start_date . ' +360 days')
+        );
+
         $subscription_type_label = "12 Months Contract (600 JOD)";
-        $price             = 600;
+        $price = 600;
     }
 
-    $query = mysqli_query($con, "SELECT * FROM users WHERE email ='$email' AND password = '$password'");
+    // Check whether the email is already registered
+    $query = mysqli_query(
+        $con,
+        "SELECT * FROM users WHERE email = '$email'"
+    );
 
     if (mysqli_num_rows($query) > 0) {
+
         echo '<script>alert("Account already exists!");</script>';
+
     } else {
-        $stmt = $con->prepare("INSERT INTO users (user_type_id, name, email, phone, password, instagram_link) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("isssss", $type, $name, $email, $phone, $password, $instagram_link);
+
+        $stmt = $con->prepare(
+            "INSERT INTO users
+            (user_type_id, name, email, phone, password, instagram_link)
+            VALUES (?, ?, ?, ?, ?, ?)"
+        );
+
+        $stmt->bind_param(
+            "isssss",
+            $type,
+            $name,
+            $email,
+            $phone,
+            $hashedPassword,
+            $instagram_link
+        );
 
         if ($stmt->execute()) {
 
             $seller_id = $con->insert_id;
 
-            $stmt2 = $con->prepare("INSERT INTO seller_subscriptions (seller_id, subscription_type, start_date, end_date, price) VALUES (?, ?, ?, ?, ?)");
-            $stmt2->bind_param("isssd", $seller_id, $subscription_type_label, $start_date, $end_date, $price);
+            $stmt2 = $con->prepare(
+                "INSERT INTO seller_subscriptions
+                (seller_id, subscription_type, start_date, end_date, price)
+                VALUES (?, ?, ?, ?, ?)"
+            );
+
+            $stmt2->bind_param(
+                "isssd",
+                $seller_id,
+                $subscription_type_label,
+                $start_date,
+                $end_date,
+                $price
+            );
+
             $stmt2->execute();
 
-            echo "<script>alert('Signed up successfully as seller, you can login now!');</script>";
-            echo "<script>document.location='./Login.php';</script>";
+            echo "<script>
+                alert('Signed up successfully as seller, you can login now!');
+            </script>";
+
+            echo "<script>
+                document.location='./Login.php';
+            </script>";
         }
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
